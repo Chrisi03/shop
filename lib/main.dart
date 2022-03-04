@@ -1,10 +1,13 @@
 import 'package:badges/badges.dart';
 import 'package:flutter/material.dart';
+import 'package:provider/provider.dart';
 import 'package:shop/domains/DrawerItem.dart';
 import 'package:shop/pages/CartPage.dart';
+import 'package:shop/pages/EditProduct.dart';
 import 'package:shop/pages/ManageProductsPage.dart';
 import 'package:shop/widgets/MyDrawer.dart';
 
+import 'domains/Products.dart';
 import 'pages/OrdersPage.dart';
 import 'pages/ShopPage.dart';
 
@@ -18,21 +21,27 @@ class MyApp extends StatelessWidget {
   // This widget is the root of your application.
   @override
   Widget build(BuildContext context) {
-    return MaterialApp(
-      title: 'Amazon Prime +',
-      theme: ThemeData(
-        primarySwatch: Colors.orange,
-      ),
-      //home: const ShopPage(),
-      routes: {
-        '/': (context) => ShopPage(),
-        ShopPage.route: (context) => ShopPage(),
-        OrdersPage.route: (context) => OrdersPage(),
-        ManageProductsPage.route: (context) => ManageProductsPage(),
-        CartPage.route: (context) => CartPage()
+    return ChangeNotifierProvider<Products>(
+      create: (BuildContext context){
+        return Products();
       },
+      child: MaterialApp(
+        title: 'Amazon Prime +',
+        theme: ThemeData(
+          primarySwatch: Colors.orange,
+        ),
+        //home: const ShopPage(),
+        routes: {
+          '/': (context) => ShopPage(),
+          ShopPage.route: (context) => ShopPage(),
+          OrdersPage.route: (context) => OrdersPage(),
+          ManageProductsPage.route: (context) => ManageProductsPage(),
+          CartPage.route: (context) => CartPage(),
+          EditProduct.route: (context) => EditProduct(),
+        },
 
-      debugShowCheckedModeBanner: false,
+        debugShowCheckedModeBanner: false,
+      ),
     );
   }
 }
