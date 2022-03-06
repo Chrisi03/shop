@@ -9,6 +9,7 @@ import 'package:shop/widgets/MyDrawer.dart';
 
 import 'domains/Product.dart';
 import 'domains/Products.dart';
+import 'domains/User.dart';
 import 'pages/OrdersPage.dart';
 import 'pages/ShopPage.dart';
 
@@ -19,14 +20,14 @@ void main() {
 class MyApp extends StatelessWidget {
   const MyApp({Key? key}) : super(key: key);
 
-
   // This widget is the root of your application.
   @override
   Widget build(BuildContext context) {
-    return ChangeNotifierProvider<Products>(
-      create: (BuildContext context){
-        return Products();
-      },
+    return MultiProvider(
+      providers: [
+        ChangeNotifierProvider<Products>(create: (_) => Products()),
+        ChangeNotifierProvider<User>(create: (_) => User())
+      ],
       child: MaterialApp(
         title: 'Amazon Prime +',
         theme: ThemeData(

@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import 'package:shop/domains/Products.dart';
+import 'package:shop/domains/User.dart';
 import 'package:shop/widgets/MyDrawer.dart';
 
 import 'EditProduct.dart';
@@ -18,6 +19,7 @@ class _ManageProductsPageState extends State<ManageProductsPage> {
   @override
   Widget build(BuildContext context) {
     final products = Provider.of<Products>(context);
+    final user = Provider.of<User>(context);
     return Scaffold(
       appBar: AppBar(
         title: Text('Manage Products'),
@@ -50,18 +52,21 @@ class _ManageProductsPageState extends State<ManageProductsPage> {
                 children: [
                   IconButton(
                     onPressed: () {
+                      user.removeLike(products.values[index]);
                       Navigator.push(context,
                           MaterialPageRoute(builder: (context) =>
                               EditProduct(NullableProduct(
                                   products.values[index].title,
                                   products.values[index].price,
                                   products.values[index].description,
-                                  products.values[index].imageUrl),index)));
+                                  products.values[index].imageUrl,
+                              products.values[index].isLiked),index)));
                     },
                     icon: Icon(Icons.edit),
                   ),
                   IconButton(
                     onPressed: () {
+                      user.removeLike(products.values[index]);
                       products.removeProduct(products.values[index]);
                     },
                     icon: Icon(Icons.delete_forever),
@@ -81,8 +86,9 @@ class NullableProduct {
   double? price;
   String? description;
   String? imageUrl;
+  bool? isLiked;
 
   NullableProduct.empty();
 
-  NullableProduct(this.title, this.price, this.description, this.imageUrl);
+  NullableProduct(this.title, this.price, this.description, this.imageUrl,this.isLiked);
 }

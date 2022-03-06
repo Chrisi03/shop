@@ -6,41 +6,41 @@ import 'package:shop/domains/User.dart';
 
 class GridViewChild extends StatefulWidget {
   Product product;
-  GridViewChild(this.product,{Key? key}) : super(key: key);
 
+  GridViewChild(this.product, {Key? key}) : super(key: key);
 
   @override
   State<GridViewChild> createState() => _GridViewChildState();
 }
 
 class _GridViewChildState extends State<GridViewChild> {
-  bool isLiked = false;
+
   @override
   Widget build(BuildContext context) {
-
-    final user = Provider.of<User>(context,listen: false);
+    final user = Provider.of<User>(context, listen: true);
     return GridTile(
-      child: Image.network(
-        widget.product.imageUrl
-      ),
+      child: Image.network(widget.product.imageUrl),
       footer: GridTileBar(
         backgroundColor: Colors.black45,
-        leading: IconButton(onPressed: () {
-         if(isLiked){
-           user.removeLike(widget.product);
-         }else{
-           user.addLike(widget.product);
-         }
-          print(user.values);
-              setState((){
-            isLiked = !isLiked;
-          });
-            } ,icon: isLiked
-            ? Icon(Icons.favorite_outlined)
-            : Icon(Icons.favorite_outline)
-        ),
+        leading: IconButton(
+            onPressed: () {
+                print(widget.product.isLiked);
+                widget.product.isLiked = !widget.product.isLiked;
+                print(widget.product.isLiked);
+                if (widget.product.isLiked) {
+                  user.addLike(widget.product);
+                } else {
+                  user.removeLike(widget.product);
+                }
+
+
+              print(user.values);
+            },
+            icon: widget.product.isLiked
+                ? Icon(Icons.favorite_outlined)
+                : Icon(Icons.favorite_outline)),
         title: Text(widget.product.title),
-        trailing: IconButton(onPressed: () {} ,icon: Icon(Icons.shopping_cart)),
+        trailing: IconButton(onPressed: () {}, icon: Icon(Icons.shopping_cart)),
       ),
     );
   }

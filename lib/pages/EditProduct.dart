@@ -3,6 +3,7 @@ import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import 'package:shop/domains/Product.dart';
 import 'package:shop/domains/Products.dart';
+import 'package:shop/domains/User.dart';
 import 'package:shop/pages/ManageProductsPage.dart';
 
 class EditProduct extends StatelessWidget {
@@ -17,7 +18,6 @@ class EditProduct extends StatelessWidget {
   Widget build(BuildContext context) {
     final products = Provider.of<Products>(context);
     bool boolean = nullableProduct.title == null ? false : true;
-
     return Scaffold(
       appBar: AppBar(
         title: Text('Edit Product'),
@@ -30,7 +30,8 @@ class EditProduct extends StatelessWidget {
                       nullableProduct.title!,
                       nullableProduct.price!,
                       nullableProduct.description!, 
-                      nullableProduct.imageUrl!);
+                      nullableProduct.imageUrl!,
+                      false);
                   if (boolean) {
                     products.updateProduct(index, product);
                   } else {

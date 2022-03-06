@@ -3,9 +3,13 @@ class Product{
   double price;
   String description;
   String imageUrl;
+   bool isLiked;
 
 
-  Product(this.title,this.price,this.description,this.imageUrl);
+  Product(this.title,this.price,this.description,this.imageUrl,this.isLiked);
+
+
+
 
   @override
   String toString() {
