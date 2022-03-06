@@ -3,17 +3,21 @@ import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import 'package:shop/domains/Product.dart';
 import 'package:shop/domains/Products.dart';
+import 'package:shop/pages/ManageProductsPage.dart';
 
 class EditProduct extends StatelessWidget {
   static const route = '/edit-page';
   final _formKey = GlobalKey<FormState>();
+  NullableProduct nullableProduct;
+  int index;
 
-  EditProduct({Key? key}) : super(key: key);
+  EditProduct(this.nullableProduct, this.index, {Key? key}) : super(key: key);
 
   @override
   Widget build(BuildContext context) {
     final products = Provider.of<Products>(context);
-    final NullableProduct nullableProduct = new NullableProduct();
+    bool boolean = nullableProduct.title == null ? false : true;
+
     return Scaffold(
       appBar: AppBar(
         title: Text('Edit Product'),
@@ -25,9 +29,13 @@ class EditProduct extends StatelessWidget {
                   var product = Product(
                       nullableProduct.title!,
                       nullableProduct.price!,
-                      nullableProduct.description!,
+                      nullableProduct.description!, 
                       nullableProduct.imageUrl!);
-                  products.addProduct(product);
+                  if (boolean) {
+                    products.updateProduct(index, product);
+                  } else {
+                    products.addProduct(product);
+                  }
                 }
                 Navigator.of(context).pop();
               },
@@ -41,7 +49,10 @@ class EditProduct extends StatelessWidget {
             Column(
               children: [
                 TextFormField(
-                  decoration: InputDecoration(labelText: 'Title'),
+                  initialValue: nullableProduct.title,
+                  decoration: InputDecoration(
+                    labelText: 'Title',
+                  ),
                   validator: (value) {
                     if (value == null || value.isEmpty) {
                       return 'Please enter some text';
@@ -53,6 +64,10 @@ class EditProduct extends StatelessWidget {
                   },
                 ),
                 TextFormField(
+                  initialValue: nullableProduct.price == null
+                      ? ''
+                      : nullableProduct.price.toString(),
+                  keyboardType: TextInputType.number,
                   decoration: InputDecoration(labelText: 'Price'),
                   validator: (value) {
                     if (value == null || value.isEmpty) {
@@ -65,6 +80,7 @@ class EditProduct extends StatelessWidget {
                   },
                 ),
                 TextFormField(
+                  initialValue: nullableProduct.description,
                   decoration: InputDecoration(labelText: 'Description'),
                   validator: (value) {
                     if (value == null || value.isEmpty) {
@@ -81,18 +97,30 @@ class EditProduct extends StatelessWidget {
                     Stack(
                       children: [
                         Container(
-                          child: Text("Hallo"),
                           width: 120,
                           height: 120,
                           decoration: BoxDecoration(
                             border: Border.all(),
                           ),
-                        )
+                        ),
+                        SizedBox(
+                          width: 120,
+                          height: 120,
+                          child: Image.network(
+                            nullableProduct.imageUrl == null
+                                ? ''
+                                : nullableProduct.imageUrl!,
+                            errorBuilder: (BuildContext context,
+                                Object exception, StackTrace? stackTrace) {
+                              return Text(' Image');
+                            },
+                          ),
+                        ),
                       ],
                     ),
                     Expanded(
                       child: TextFormField(
-                        //key: _formKey,
+                        initialValue: nullableProduct.imageUrl,
                         decoration: InputDecoration(labelText: 'URL'),
                         validator: (value) {
                           if (value == null || value.isEmpty) {
@@ -115,14 +143,4 @@ class EditProduct extends StatelessWidget {
       ),
     );
   }
-}
-
-class NullableProduct {
-  String? title;
-  double? price;
-  String? description;
-  String? imageUrl;
-
-  NullableProduct();
-//NullableProduct(this.title,this.price,this.description,this.imageUrl);
 }

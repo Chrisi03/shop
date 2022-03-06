@@ -7,6 +7,7 @@ import 'package:shop/pages/EditProduct.dart';
 import 'package:shop/pages/ManageProductsPage.dart';
 import 'package:shop/widgets/MyDrawer.dart';
 
+import 'domains/Product.dart';
 import 'domains/Products.dart';
 import 'pages/OrdersPage.dart';
 import 'pages/ShopPage.dart';
@@ -17,6 +18,7 @@ void main() {
 
 class MyApp extends StatelessWidget {
   const MyApp({Key? key}) : super(key: key);
+
 
   // This widget is the root of your application.
   @override
@@ -37,7 +39,6 @@ class MyApp extends StatelessWidget {
           OrdersPage.route: (context) => OrdersPage(),
           ManageProductsPage.route: (context) => ManageProductsPage(),
           CartPage.route: (context) => CartPage(),
-          EditProduct.route: (context) => EditProduct(),
         },
 
         debugShowCheckedModeBanner: false,

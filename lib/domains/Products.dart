@@ -1,4 +1,5 @@
 import 'package:flutter/cupertino.dart';
+import 'package:flutter/material.dart';
 
 import 'Product.dart';
 
@@ -21,4 +22,12 @@ class Products with ChangeNotifier{
     _values.remove(product);
     notifyListeners();
   }
+
+  void updateProduct(int index, Product product){
+    _values[index] = product;
+    notifyListeners();
+  }
+
+
+
 }
