@@ -9,6 +9,7 @@ import 'package:shop/widgets/MyDrawer.dart';
 
 import 'domains/Product.dart';
 import 'domains/Products.dart';
+import 'domains/ShoppingList.dart';
 import 'domains/User.dart';
 import 'pages/OrdersPage.dart';
 import 'pages/ShopPage.dart';
@@ -26,7 +27,8 @@ class MyApp extends StatelessWidget {
     return MultiProvider(
       providers: [
         ChangeNotifierProvider<Products>(create: (_) => Products()),
-        ChangeNotifierProvider<User>(create: (_) => User())
+        ChangeNotifierProvider<User>(create: (_) => User()),
+        ChangeNotifierProvider<ShoppingList>(create: (_) => ShoppingList())
       ],
       child: MaterialApp(
         title: 'Amazon Prime +',
