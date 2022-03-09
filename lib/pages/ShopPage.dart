@@ -4,6 +4,7 @@ import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import 'package:shop/domains/Product.dart';
 import 'package:shop/domains/Products.dart';
+import 'package:shop/domains/ShoppingList.dart';
 import 'package:shop/domains/User.dart';
 import 'package:shop/pages/CartPage.dart';
 import 'package:shop/widgets/GridViewChild.dart';
@@ -25,6 +26,7 @@ class _ShopPageState extends State<ShopPage> {
   Widget build(BuildContext context) {
     //final products = Provider.of<Products>(context, listen: true);
     final user = Provider.of<User>(context, listen: false);
+    final shoppingList = Provider.of<ShoppingList>(context, listen: true);
 
     return Scaffold(
       appBar: AppBar(
@@ -55,7 +57,7 @@ class _ShopPageState extends State<ShopPage> {
                   ]),
           Badge(
             padding: EdgeInsets.all(2),
-            badgeContent: Text('0'),
+            badgeContent: Text(shoppingList.values.length.toString()),
             child: IconButton(
                 onPressed: () {
                   Navigator.of(context).pushNamed(CartPage.route);

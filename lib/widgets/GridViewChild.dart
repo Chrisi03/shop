@@ -34,8 +34,6 @@ class _GridViewChildState extends State<GridViewChild> {
               } else {
                 user.removeLike(widget.product);
               }
-
-              print(user.values);
             },
             icon: widget.product.isLiked
                 ? Icon(Icons.favorite_outlined)
@@ -43,16 +41,39 @@ class _GridViewChildState extends State<GridViewChild> {
         title: Text(widget.product.title),
         trailing: IconButton(
             onPressed: () {
-             if (shoppingList.values.isNotEmpty) {
+              ScaffoldMessenger.of(context).showSnackBar(
+                SnackBar(
+                  content: Text(widget.product.title + 'added'),
+                  action: SnackBarAction(
+                    label: 'Undo',
+                    onPressed: () {
+                      for (var i = 0; i < shoppingList.values.length; i++) {
+                        if (shoppingList.values[i].product == widget.product) {
+                          if (shoppingList.values[i].count > 1) {
+                            shoppingList.values[i].totalPrice -=
+                                widget.product.price;
+                            shoppingList.values[i].count--;
+                          } else {
+                            shoppingList.removeFromList(shoppingList.values[i]);
+                          }
+                        }
+                      }
+                    },
+                  ),
+                ),
+              );
+
+              if (shoppingList.values.isNotEmpty) {
                 for (var i = 0; i < shoppingList.values.length; i++) {
                   if (shoppingList.values[i].product == widget.product) {
-                    shoppingList.values[i].totalPrice+= widget.product.price;
+                    shoppingList.values[i].totalPrice += widget.product.price;
+                    shoppingList.values[i].count++;
                     return;
                   }
                 }
               }
-              shoppingList.addToList(ShoppingListItem( widget.product,widget.product.price));
-
+              shoppingList.addToList(
+                  ShoppingListItem(widget.product, widget.product.price, 1));
             },
             icon: Icon(Icons.shopping_cart)),
       ),
