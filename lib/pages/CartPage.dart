@@ -1,6 +1,7 @@
 import 'package:badges/badges.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
+import 'package:shop/domains/ShoppingData.dart';
 import 'package:shop/domains/ShoppingList.dart';
 
 class CartPage extends StatefulWidget {
@@ -25,7 +26,7 @@ class _CartPageState extends State<CartPage> {
 
   @override
   Widget build(BuildContext context) {
-    final shoppingList = Provider.of<ShoppingList>(context);
+    final shoppingData = Provider.of<ShoppingData>(context);
     return Scaffold(
       appBar: AppBar(
         title: Text('Cart'),
@@ -43,15 +44,19 @@ class _CartPageState extends State<CartPage> {
                   shape: BadgeShape.square,
                   borderRadius: BorderRadius.circular(15),
                   badgeContent:
-                      Text('€' + getTotalPrice(shoppingList).toString()),
+                      Text('€' + getTotalPrice(shoppingData.currentShoppingList).toString()),
                 ),
-                TextButton(onPressed: () {}, child: Text('ORDER NOW'))
+                TextButton(onPressed: () {
+                  shoppingData.currentShoppingList.setToCurrentDate();
+                  shoppingData.currentShoppingList.setTotalPrice(totalPrice);
+                  shoppingData.order();
+                }, child: Text('ORDER NOW'))
               ],
             )),
           ),
           ListView.builder(
               shrinkWrap: true,
-              itemCount: shoppingList.values.length,
+              itemCount: shoppingData.currentShoppingList.values.length,
               itemBuilder: (_, index) {
                 return Dismissible(
                   confirmDismiss: (DismissDirection direction) async{
@@ -77,23 +82,27 @@ class _CartPageState extends State<CartPage> {
                   },
                   background: Container(
                     color: Colors.red,
+                    child: Padding(
+                      padding: const EdgeInsets.all(15),
+                      child: Icon(Icons.delete_forever,color: Colors.white),
+                    ),
                   ),
-                  key: ValueKey<int>(shoppingList.values.length),
+                  key: ValueKey<int>(shoppingData.currentShoppingList.values.length),
                   onDismissed: (DismissDirection direction) {
                     setState(() {
-                      shoppingList.removeFromList(shoppingList.values[index]);
+                      shoppingData.removeFromCurrentShoppingList(shoppingData.currentShoppingList.values[index]);
                     });
                   },
                   child: Card(
                     margin: EdgeInsets.all(11),
                     child: ListTile(
                       leading: Text(
-                          shoppingList.values[index].product.price.toString()),
-                      title: Text(shoppingList.values[index].product.title),
+                          shoppingData.currentShoppingList.values[index].product.price.toString()),
+                      title: Text(shoppingData.currentShoppingList.values[index].product.title),
                       subtitle: Text('Total:\n' +
-                          shoppingList.values[index].totalPrice.toString()),
+                          shoppingData.currentShoppingList.values[index].totalPrice.toString()),
                       trailing:
-                          Text(shoppingList.values[index].count.toString() + 'x'),
+                          Text(shoppingData.currentShoppingList.values[index].count.toString() + 'x'),
                     ),
                   ),
                 );

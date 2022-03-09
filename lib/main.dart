@@ -2,7 +2,9 @@ import 'package:badges/badges.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import 'package:shop/domains/DrawerItem.dart';
+import 'package:shop/domains/ShoppingData.dart';
 import 'package:shop/pages/CartPage.dart';
+import 'package:shop/pages/DetailPage.dart';
 import 'package:shop/pages/EditProduct.dart';
 import 'package:shop/pages/ManageProductsPage.dart';
 import 'package:shop/widgets/MyDrawer.dart';
@@ -28,7 +30,7 @@ class MyApp extends StatelessWidget {
       providers: [
         ChangeNotifierProvider<Products>(create: (_) => Products()),
         ChangeNotifierProvider<User>(create: (_) => User()),
-        ChangeNotifierProvider<ShoppingList>(create: (_) => ShoppingList())
+        ChangeNotifierProvider<ShoppingData>(create: (_) => ShoppingData())
       ],
       child: MaterialApp(
         title: 'Amazon Prime +',

@@ -2,9 +2,11 @@ import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import 'package:shop/domains/Product.dart';
 import 'package:shop/domains/Products.dart';
+import 'package:shop/domains/ShoppingData.dart';
 import 'package:shop/domains/ShoppingList.dart';
 import 'package:shop/domains/ShoppingListItem.dart';
 import 'package:shop/domains/User.dart';
+import 'package:shop/pages/DetailPage.dart';
 
 class GridViewChild extends StatefulWidget {
   Product product;
@@ -19,16 +21,20 @@ class _GridViewChildState extends State<GridViewChild> {
   @override
   Widget build(BuildContext context) {
     final user = Provider.of<User>(context, listen: true);
-    final shoppingList = Provider.of<ShoppingList>(context, listen: true);
+    final shoppingData = Provider.of<ShoppingData>(context);
     return GridTile(
-      child: Image.network(widget.product.imageUrl),
+      child: GestureDetector(
+        child: Image.network(widget.product.imageUrl),
+        onTap: () {
+          Navigator.push(
+              context, MaterialPageRoute(builder: (context) => DetailPage(widget.product)));
+        },
+      ),
       footer: GridTileBar(
         backgroundColor: Colors.black45,
         leading: IconButton(
             onPressed: () {
-              print(widget.product.isLiked);
               widget.product.isLiked = !widget.product.isLiked;
-              print(widget.product.isLiked);
               if (widget.product.isLiked) {
                 user.addLike(widget.product);
               } else {
@@ -47,14 +53,20 @@ class _GridViewChildState extends State<GridViewChild> {
                   action: SnackBarAction(
                     label: 'Undo',
                     onPressed: () {
-                      for (var i = 0; i < shoppingList.values.length; i++) {
-                        if (shoppingList.values[i].product == widget.product) {
-                          if (shoppingList.values[i].count > 1) {
-                            shoppingList.values[i].totalPrice -=
-                                widget.product.price;
-                            shoppingList.values[i].count--;
+                      for (var i = 0;
+                          i < shoppingData.currentShoppingList.values.length;
+                          i++) {
+                        if (shoppingData
+                                .currentShoppingList.values[i].product ==
+                            widget.product) {
+                          if (shoppingData.currentShoppingList.values[i].count >
+                              1) {
+                            shoppingData.currentShoppingList.values[i]
+                                .totalPrice -= widget.product.price;
+                            shoppingData.currentShoppingList.values[i].count--;
                           } else {
-                            shoppingList.removeFromList(shoppingList.values[i]);
+                            shoppingData.removeFromCurrentShoppingList(
+                                shoppingData.currentShoppingList.values[i]);
                           }
                         }
                       }
@@ -63,16 +75,20 @@ class _GridViewChildState extends State<GridViewChild> {
                 ),
               );
 
-              if (shoppingList.values.isNotEmpty) {
-                for (var i = 0; i < shoppingList.values.length; i++) {
-                  if (shoppingList.values[i].product == widget.product) {
-                    shoppingList.values[i].totalPrice += widget.product.price;
-                    shoppingList.values[i].count++;
+              if (shoppingData.currentShoppingList.values.isNotEmpty) {
+                for (var i = 0;
+                    i < shoppingData.currentShoppingList.values.length;
+                    i++) {
+                  if (shoppingData.currentShoppingList.values[i].product ==
+                      widget.product) {
+                    shoppingData.currentShoppingList.values[i].totalPrice +=
+                        widget.product.price;
+                    shoppingData.currentShoppingList.values[i].count++;
                     return;
                   }
                 }
               }
-              shoppingList.addToList(
+              shoppingData.addToCurrentShoppingList(
                   ShoppingListItem(widget.product, widget.product.price, 1));
             },
             icon: Icon(Icons.shopping_cart)),

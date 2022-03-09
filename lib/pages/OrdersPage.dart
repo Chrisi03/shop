@@ -1,4 +1,9 @@
 import 'package:flutter/material.dart';
+import 'package:intl/intl.dart';
+import 'package:provider/provider.dart';
+import 'package:shop/domains/ShoppingData.dart';
+import 'package:shop/domains/ShoppingList.dart';
+import 'package:shop/domains/ShoppingListItem.dart';
 import 'package:shop/widgets/MyDrawer.dart';
 
 class OrdersPage extends StatefulWidget {
@@ -10,105 +15,69 @@ class OrdersPage extends StatefulWidget {
   State<OrdersPage> createState() => _OrdersPageState();
 }
 
+class OrderItem {
+  List<ShoppingListItem> shoppingList;
+  double total;
+  DateTime date;
+  bool isExpanded = false;
+
+  OrderItem(this.shoppingList, this.total, this.date);
+}
+
+List<OrderItem> generateItems(List<ShoppingList> shoppingLists) {
+  return List<OrderItem>.generate(shoppingLists.length, (int index) {
+    return OrderItem(shoppingLists[index].values,
+        shoppingLists[index].totalPrice!, shoppingLists[index].date!);
+  });
+}
+
 class _OrdersPageState extends State<OrdersPage> {
+   List<OrderItem>? _data = null;
+
   @override
   Widget build(BuildContext context) {
+    final shoppingData = Provider.of<ShoppingData>(context);
+    _data ??= generateItems(shoppingData.pastShoppingList);
     return Scaffold(
       appBar: AppBar(
         title: Text('Orders'),
+      ),
+      body: SingleChildScrollView(
+        child: Container(
+          child: _buildPanel(_data!),
+        ),
       ),
       drawer: MyDrawer(),
     );
   }
 
-}
-
-
-void main() => runApp(const MyApp());
-
-class MyApp extends StatelessWidget {
-  const MyApp({Key? key}) : super(key: key);
-
-  static const String _title = 'Flutter Code Sample';
-
-  @override
-  Widget build(BuildContext context) {
-    return MaterialApp(
-      title: _title,
-      home: Scaffold(
-        appBar: AppBar(title: const Text(_title)),
-        body: const MyStatefulWidget(),
-      ),
-    );
-  }
-}
-
-// stores ExpansionPanel state information
-class Item {
-  Item({
-    required this.expandedValue,
-    required this.headerValue,
-    this.isExpanded = false,
-  });
-
-  String expandedValue;
-  String headerValue;
-  bool isExpanded;
-}
-
-List<Item> generateItems(int numberOfItems) {
-  return List<Item>.generate(numberOfItems, (int index) {
-    return Item(
-      headerValue: 'Panel $index',
-      expandedValue: 'This is item number $index',
-    );
-  });
-}
-
-class MyStatefulWidget extends StatefulWidget {
-  const MyStatefulWidget({Key? key}) : super(key: key);
-
-  @override
-  State<MyStatefulWidget> createState() => _MyStatefulWidgetState();
-}
-
-class _MyStatefulWidgetState extends State<MyStatefulWidget> {
-  final List<Item> _data = generateItems(8);
-
-  @override
-  Widget build(BuildContext context) {
-    return SingleChildScrollView(
-      child: Container(
-        child: _buildPanel(),
-      ),
-    );
-  }
-
-  Widget _buildPanel() {
+  Widget _buildPanel(List<OrderItem> _data) {
     return ExpansionPanelList(
       expansionCallback: (int index, bool isExpanded) {
         setState(() {
           _data[index].isExpanded = !isExpanded;
         });
       },
-      children: _data.map<ExpansionPanel>((Item item) {
+      children: _data.map<ExpansionPanel>((OrderItem item) {
         return ExpansionPanel(
           headerBuilder: (BuildContext context, bool isExpanded) {
             return ListTile(
-              title: Text(item.headerValue),
+              title: Text('€' + item.total.toString()),
+              subtitle: Text(DateFormat('dd.MM.yyy HH:mm').format(item.date)),
             );
           },
-          body: ListTile(
-              title: Text(item.expandedValue),
-              subtitle:
-              const Text('To delete this panel, tap the trash can icon'),
-              trailing: const Icon(Icons.delete),
-              onTap: () {
-                setState(() {
-                  _data.removeWhere((Item currentItem) => item == currentItem);
-                });
-              }),
-          isExpanded: item.isExpanded,
+          body: ListView.builder(
+            shrinkWrap: true,
+              itemCount: item.shoppingList.length,
+              itemBuilder: (_,index){
+                return  ListTile(
+                    title: Text(item.shoppingList[index].product.title),
+                  trailing: Text(item.shoppingList[index].count.toString()+'x €'+ item.shoppingList[index].product.price.toString()),
+                );
+          }),
+
+
+          isExpanded: item.isExpanded
         );
       }).toList(),
     );
